@@ -4,17 +4,25 @@ import { PomodoroRoundDto, PomodoroSessionDto } from './pomodoro.dto';
 
 @Injectable()
 export class PomodoroService {
-  updateRound(dto: PomodoroRoundDto, id: string) {
-    throw new Error('Method not implemented.');
-  }
   constructor(private prisma: PrismaService) {}
 
   async getTodaySession(userId: string) {
     const today = new Date().toISOString().split('T')[0];
 
     return this.prisma.pomodoroSession.findFirst({
-      where: { createdAt: { gte: new Date(today) }, userId: userId },
-      include: { rounds: { orderBy: { id: 'desc' } } },
+      where: {
+        createdAt: {
+          gte: new Date(today),
+        },
+        userId,
+      },
+      include: {
+        rounds: {
+          orderBy: {
+            id: 'asc',
+          },
+        },
+      },
     });
   }
 
@@ -24,10 +32,16 @@ export class PomodoroService {
     if (todaySession) return todaySession;
 
     const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-      select: { intervalsCount: true },
+      where: {
+        id: userId,
+      },
+      select: {
+        intervalsCount: true,
+      },
     });
+
     if (!user) throw new NotFoundException('User not found');
+
     return this.prisma.pomodoroSession.create({
       data: {
         rounds: {
@@ -37,21 +51,47 @@ export class PomodoroService {
             })),
           },
         },
-        user: { connect: { id: userId } },
+        user: {
+          connect: {
+            id: userId,
+          },
+        },
       },
-      include: { rounds: true },
+      include: {
+        rounds: true,
+      },
     });
   }
 
-  async update(dto : Partial<PomodoroSessionDto>, pomodoroId: string, userId: string){
+  async update(
+    dto: Partial<PomodoroSessionDto>,
+    pomodoroId: string,
+    userId: string,
+  ) {
     return this.prisma.pomodoroSession.update({
-      where : { userId, id : pomodoroId,}, data: dto
-    })
+      where: {
+        userId,
+        id: pomodoroId,
+      },
+      data: dto,
+    });
   }
 
-  async deleteSession(sessionId : string, userId: string) {
+  async updateRound(dto: Partial<PomodoroRoundDto>, roundId: string) {
+    return this.prisma.pomodoroRound.update({
+      where: {
+        id: roundId,
+      },
+      data: dto,
+    });
+  }
+
+  async deleteSession(sessionId: string, userId: string) {
     return this.prisma.pomodoroSession.delete({
-      where: { id: sessionId, userId}
-    })
+      where: {
+        id: sessionId,
+        userId,
+      },
+    });
   }
 }

@@ -18,5 +18,5 @@ export class TaskDto {
   @IsEnum(Priority)
   @IsOptional()
   @Transform(({ value }) => ('' + value).toLowerCase())
-  priority: Priority;
+  priority?: Priority;
 }

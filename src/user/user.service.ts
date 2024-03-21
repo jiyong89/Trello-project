@@ -32,41 +32,39 @@ export class UserService {
         isCompleted: true,
       },
     });
-    
 
-    const todayStart = startOfDay(new Date())
-    const weekStart = startOfDay(subDays(new Date(), 7))
+    const todayStart = startOfDay(new Date());
+    const weekStart = startOfDay(subDays(new Date(), 7));
 
     const todayTasks = await this.prisma.task.count({
-      where : {
+      where: {
         userId: id,
         createdAt: {
-          gte: todayStart.toISOString()
-        }
-      }
-    })
+          gte: todayStart.toISOString(),
+        },
+      },
+    });
 
     const weekTasks = await this.prisma.task.count({
-      where : {
+      where: {
         userId: id,
         createdAt: {
-          gte: weekStart.toISOString()
-        }
-      }
-    })
+          gte: weekStart.toISOString(),
+        },
+      },
+    });
 
-
-    const { password, ...rest} = profile
+    const { password, ...rest } = profile;
 
     return {
-      user : rest,
-      statistics:[
-        {label: 'Total Tasks', value: totalTasks},
-        {label: 'Completed Tasks', value: completedTasks},
-        {label: 'Today Tasks', value: todayTasks},
-        {label: 'Week Tasks', value: weekTasks}
-      ]
-    }
+      user: rest,
+      statistics: [
+        { label: 'Total', value: totalTasks },
+        { label: 'Completed Tasks', value: completedTasks },
+        { label: 'Today Tasks', value: todayTasks },
+        { label: 'Week Tasks', value: weekTasks },
+      ],
+    };
   }
 
   async create(dto: AuthDto) {
@@ -92,10 +90,10 @@ export class UserService {
         id,
       },
       data,
-      select:{
-        name:true,
-        email:true,
-      }
+      select: {
+        name: true,
+        email: true,
+      },
     });
   }
 }

@@ -14,15 +14,16 @@ import { TimeBlockService } from './time-block.service';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/user.decorator';
 import { TimeBlockDto } from './dto/time-block.dto';
+import { UpdateOrderDto } from './dto/update-order.dto';
 
-@Controller('user/time-block')
+@Controller('user/time-blocks')
 export class TimeBlockController {
-  constructor(private readonly TimeBlockService: TimeBlockService) {}
+  constructor(private readonly timeBlockService: TimeBlockService) {}
 
   @Get()
   @Auth()
   async getAll(@CurrentUser('id') userId: string) {
-    return this.TimeBlockService.getAll(userId);
+    return this.timeBlockService.getAll(userId);
   }
 
   @UsePipes(new ValidationPipe())
@@ -30,7 +31,15 @@ export class TimeBlockController {
   @Post()
   @Auth()
   async create(@Body() dto: TimeBlockDto, @CurrentUser('id') userId: string) {
-    return this.TimeBlockService.create(dto, userId);
+    return this.timeBlockService.create(dto, userId);
+  }
+
+  @UsePipes(new ValidationPipe())
+  @HttpCode(200)
+  @Put('update-order')
+  @Auth()
+  updateOrder(@Body() updateOrderDto: UpdateOrderDto) {
+    return this.timeBlockService.updateOrder(updateOrderDto.ids);
   }
 
   @UsePipes(new ValidationPipe())
@@ -42,13 +51,13 @@ export class TimeBlockController {
     @CurrentUser('id') userId: string,
     @Param('id') id: string,
   ) {
-    return this.TimeBlockService.update(dto, id, userId);
+    return this.timeBlockService.update(dto, id, userId);
   }
 
   @HttpCode(200)
   @Delete(':id')
   @Auth()
-  async delete(@Param('id') userId: string, id: string) {
-    return this.TimeBlockService.delete(id, userId);
+  async delete(@CurrentUser('id') userId: string, @Param('id') id: string) {
+    return this.timeBlockService.delete(id, userId);
   }
 }

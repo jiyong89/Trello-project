@@ -1,4 +1,12 @@
-import { IsEmail, IsNumber, IsOptional, IsString, Max, Min, MinLength } from 'class-validator';
+import {
+  IsEmail,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Max,
+  Min,
+  MinLength,
+} from 'class-validator';
 
 export class PomodoroSettingsDto {
   @IsOptional()
@@ -18,17 +26,17 @@ export class PomodoroSettingsDto {
   intervalsCount?: number;
 }
 
-export class UserDto extends PomodoroSettingsDto{
-    @IsEmail()
-    @IsOptional()
-    email : string
+export class UserDto extends PomodoroSettingsDto {
+  @IsEmail()
+  @IsOptional()
+  email: string;
 
-    @IsString()
-    @IsOptional()
-    name? : string
+  @IsString()
+  @IsOptional()
+  name?: string;
 
-    @MinLength(6,{message : 'password must be at least 6 characters long'})
-
-    @IsString()
-    password: string
+  @IsOptional()
+  @MinLength(6, { message: 'password must be at least 6 characters long' })
+  @IsString()
+  password: string;
 }

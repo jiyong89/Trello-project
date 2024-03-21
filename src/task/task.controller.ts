@@ -10,19 +10,19 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { TaskService } from './Task.service';
+import { TaskService } from './task.service';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { CurrentUser } from 'src/auth/decorators/user.decorator';
-import { TaskDto } from './Task.dto';
+import { TaskDto } from './task.dto';
 
-@Controller('task/')
+@Controller('user/tasks')
 export class TaskController {
-  constructor(private readonly TaskService: TaskService) {}
+  constructor(private readonly taskService: TaskService) {}
 
   @Get()
   @Auth()
   async getAll(@CurrentUser('id') userId: string) {
-    return this.TaskService.getAll(userId);
+    return this.taskService.getAll(userId);
   }
 
   @UsePipes(new ValidationPipe())
@@ -30,7 +30,7 @@ export class TaskController {
   @Post()
   @Auth()
   async create(@Body() dto: TaskDto, @CurrentUser('id') userId: string) {
-    return this.TaskService.create(dto, userId);
+    return this.taskService.create(dto, userId);
   }
 
   @UsePipes(new ValidationPipe())
@@ -42,13 +42,13 @@ export class TaskController {
     @CurrentUser('id') userId: string,
     @Param('id') id: string,
   ) {
-    return this.TaskService.update(dto, id, userId);
+    return this.taskService.update(dto, id, userId);
   }
 
   @HttpCode(200)
   @Delete(':id')
   @Auth()
   async delete(@Param('id') id: string) {
-    return this.TaskService.delete(id);
+    return this.taskService.delete(id);
   }
 }
